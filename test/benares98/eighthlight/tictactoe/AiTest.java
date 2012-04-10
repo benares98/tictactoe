@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import benares98.eighthlight.tictactoe.Game.piece;
+
 public class AiTest {
 
 	@Before
@@ -20,39 +22,37 @@ public class AiTest {
 		}catch(Exception e){
 			assert(e instanceof IllegalArgumentException);
 		}
-		Player x = new Player('X');
-		Player o = new Player('O');
-		Player[] board = new Player[]{
-				x, o, x,
-				o, x, o,
-				o, o, null
+		piece[] board = new piece[]{
+				piece.x, piece.o, piece.x,
+				piece.o, piece.x, piece.o,
+				piece.o, piece.o, piece._
 		};
-		assertEquals(8, Ai.suggestedMove(x, board));
+		assertEquals(8, Ai.suggestedMove(piece.x, board));
 		
 		//Weighted pos strategy would choose 2 instead of 3 which is the better move
-		board = new Player[]{
-				o, 	  x,    null,
-				null, o,    null,
-				null, null, x
+		board = new piece[]{
+				piece.o, piece.x, piece._,
+				piece._, piece.o, piece._,
+				piece._, piece._, piece.x
 		};
-		assertEquals(3, Ai.suggestedMove(o, board));
+		assertEquals(3, Ai.suggestedMove(piece.o, board));
 		
 		//Weighted pos strategy would choose 0 instead of the side pos.
 		//If 0 chosen, player x could choose 8 which will give x an advantage.
-		board = new Player[]{
-				null,	null,	x,
-				null,	o,		null,
-				x,		null,	null
+		board = new piece[]{
+				piece._, piece._, piece.x,
+				piece._, piece.o, piece._,
+				piece.x, piece._,	piece._
 		};
-		assertFalse(0 == Ai.suggestedMove(o, board));
+		assertFalse(0 == Ai.suggestedMove(piece.o, board));
 		
 		//Weighted pos strategy would choose 4.  Should use minimax to determine next pos.
-		board = new Player[]{
-				null,	null,	x,
-				null,	null,	null,
-				null,	null,	null
+		board = new piece[]{
+				piece._, piece._, piece.x,
+				piece._, piece._, piece._,
+				piece._, piece._, piece._
 		};
-		assertFalse(4 == Ai.suggestedMove(o, board));
+		assertFalse(4 == Ai.suggestedMove(piece.o, board));
 	}
 
 }

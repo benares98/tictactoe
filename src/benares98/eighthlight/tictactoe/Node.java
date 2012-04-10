@@ -1,22 +1,29 @@
 package benares98.eighthlight.tictactoe;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import benares98.eighthlight.tictactoe.Game.piece;
 import benares98.eighthlight.tictactoe.Game.status;
 
 public class Node {
 
-	public char player;
+	public piece player;
 	private List<Node> children;
 	public int score;
 	public int otherPlayerScore;
 	public status status;
-	public char[] board;
+	public piece[] board;
+	public int position;
 	
 	public void addChild(Node node) {
-		children.add(node);
-		this.otherPlayerScore += node.score;
-		this.score += node.otherPlayerScore;
+		if (null==children){
+			children = new ArrayList<Node>();
+		}
+		if(!children.contains(node))
+			children.add(node);
 	}
+	
+	public List<Node> getChildren(){return children;}
 
 }

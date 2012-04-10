@@ -6,11 +6,18 @@ import java.io.InputStreamReader;
 
 public class Game {
 
-	public static enum status{x, o, tie, atPlay};
-	public static enum player{x, o};
-	public static status getState(char[] board) {
-		// TODO Auto-generated method stub
-		return status.atPlay;
+	public static enum status{end, atPlay};
+	public static enum end{x, o, tie};
+	public static enum piece{x, o,_};
+	public static status getState(piece[] board) {
+		boolean empty = false;
+		for(piece p:board){
+			if (piece._ == p) empty = true;
+		}
+		
+		if (empty) return status.atPlay;
+		else return status.end;
+		
 	}
 
 	public static void main(String[] args){
@@ -22,7 +29,7 @@ public class Game {
 				String input = br.readLine();
 				int chosen = Integer.valueOf(input);
 				if (chosen <= 2 && chosen > 0){
-					
+					//TODO
 				}
 			} catch (IOException e) {
 				System.out.println("IO error trying to read your input.");
