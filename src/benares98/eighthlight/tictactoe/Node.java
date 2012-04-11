@@ -7,23 +7,29 @@ import benares98.eighthlight.tictactoe.Game.piece;
 import benares98.eighthlight.tictactoe.Game.status;
 
 public class Node {
-
-	public piece player;
 	private List<Node> children;
-	public int score;
-	public int otherPlayerScore;
 	public status status;
+	public int position = -1;
 	public piece[] board;
-	public int position;
 	
-	public void addChild(Node node) {
-		if (null==children){
-			children = new ArrayList<Node>();
-		}
-		if(!children.contains(node))
-			children.add(node);
+	public Node(status state) {
+		this.status = state;
+	}
+
+	public Node(status state, int position) {
+		this.position = position;
+		this.status = state;
 	}
 	
 	public List<Node> getChildren(){return children;}
+
+	public void setChildren(List<Node> children) {
+		this.children = children;
+	}
+	
+	public void addChild(Node child){
+		if (null == children) children = new ArrayList<Node>();
+		if (!children.contains(child)) children.add(child);
+	}
 
 }
