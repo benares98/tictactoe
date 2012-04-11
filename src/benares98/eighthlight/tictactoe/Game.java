@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
-import benares98.eighthlight.tictactoe.Game.piece;
-
 public class Game {
 	public static final Set<Set<Integer>> scoringPositions = new HashSet<Set<Integer>>();
 	public static enum status{atPlay, x, o, tie};
@@ -99,6 +97,8 @@ public class Game {
 	}
 
 	public static Game.status getWinningState(piece player) {
+		if (null==player)throw new IllegalArgumentException("Argument must not be null");
+		if (piece._==player)throw new IllegalArgumentException("Argument must be either x or o");
 		return Game.status.valueOf(player.toString());
 	}
 	

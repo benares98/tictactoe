@@ -15,27 +15,28 @@ import benares98.eighthlight.tictactoe.Game.piece;
  */
 public class Ai {
 	public static Node buildGameTree(piece player, Game.piece[] board){
-		Node node = new Node(Game.getState(board));
-		node.board = board;
-		if (node.status == Game.status.atPlay){
+		return buildGameTree(player, board, -1);
+	}
+	public static Node buildGameTree(piece player, Game.piece[] board, int position){
+		Game.status state = Game.getState(board);
+		Node node;
+		if (state == Game.status.atPlay){
 			//TODO consider reflections, rotations + a/b pruning to reduce node count and search
 			Set<Integer> available = Game.availablePositions(board);
 			List<Node>children = new ArrayList<Node>(available.size());
 			for (Integer pos:available) {
 				Game.piece[] gameTreeCopy = board.clone();
 				gameTreeCopy[pos] = player;
-				Node childNode = buildGameTree(rival(player), gameTreeCopy);
-				childNode.position = pos;
+				Node childNode = buildGameTree(rival(player), gameTreeCopy, pos);
 				children.add(childNode);
 			}
-			node.setChildren(children);
+			node = new Node(state, position, children);
 		}
-		else{
-			//node is the leaf.
-		}
+		else node = new Node(state, position);//node is leaf
 		
 		return node;
 	}
+	
 	private static Game.piece rival(Game.piece player) {
 		if (Game.piece.x == player) return Game.piece.o; 
 		else if(Game.piece.o == player) return Game.piece.x;
@@ -49,32 +50,35 @@ public class Ai {
 		int best = worst(true);
 		int position = -1;
 		for(Node choice:choices){
-			int localPos = choice.position;
-			piece[] localBoard = choice.board;
-			int score = computeMinimax(player, choice, true);
-			System.out.println("Score "+score+" for pos "+localPos);
+			int score = computeMinimax(player, choice, false);
 			if (betterThan(score, best, true)){
 				best = score;
-				position = choice.position;
+				position = choice.getPosition();
 			}
 		}
+		
 		return position;
 	}
 	
 	public static int computeMinimax(Game.piece player, Node node, boolean maximize) {
 		Game.status winState = Game.getWinningState(player);
 		
-		if (Game.status.atPlay != node.status){
-			if (Game.status.tie == node.status) return 0;
-			else return (node.status == winState) ? 1 : -1;
+		if (Game.status.atPlay != node.getStatus()){
+			if (Game.status.tie == node.getStatus()) return 1;
+			else return (node.getStatus() == winState) ? 1 : -1;
 		}
 		
 		int best = worst(maximize);
 		
 		for(Node childNode:node.getChildren()){
-			int childScore = computeMinimax(player, childNode, maximize);
-			int wins = countStateAtDepth(winState, 1, childNode);
-			childScore += wins;
+			int childScore = computeMinimax(player, childNode, !maximize);
+			if (maximize){
+				int wins = countStateAtDepth(winState, 1, childNode);
+				childScore += wins;
+			}else{
+				int wins = countStateAtDepth(Game.getWinningState(rival(player)), 2, childNode);
+				childScore += wins;
+			}
 			
 			if (betterThan(childScore, best, maximize)) best = childScore;
 		}
@@ -82,9 +86,9 @@ public class Ai {
 	}
 	
 	public static int countStateAtDepth(Game.status state, int depth, Node node) {
-		if (Game.status.atPlay != node.status && depth > 0) return 0; //terminal reached before going to the right depth
+		if (Game.status.atPlay != node.getStatus() && depth > 0) return 0; //terminal reached before going to the right depth
 		
-		if (depth == 0)return (state == node.status) ? 1 : 0;
+		if (depth == 0)return (state == node.getStatus()) ? 1 : 0;
 		
 		int count = 0;
 		for (Node childNode:node.getChildren())//assumes that since the node's status is atPlay then it has children

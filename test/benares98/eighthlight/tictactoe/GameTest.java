@@ -150,12 +150,33 @@ public class GameTest {
 
 	@Test
 	public void testGetWinningState() {
-		fail("Not yet implemented"); // TODO
+		assertEquals(status.o, Game.getWinningState(piece.o));
+		assertEquals(status.x, Game.getWinningState(piece.x));
+		
+		try{
+			Game.getWinningState(piece._);
+			fail("Should have thrown an IllegalArgumentException.  piece._ represents an empty space.");
+		}catch(Exception e){
+			assertTrue(e instanceof IllegalArgumentException);
+		}
+		
+		try{
+			Game.getWinningState(null);
+			fail("Should have thrown an IllegalArgumentException for null argument");
+		}catch(Exception e){
+			assertTrue(e instanceof IllegalArgumentException);
+		}
 	}
 
 	@Test
 	public void testPretty() {
-		fail("Not yet implemented"); // TODO
+		piece[] board = new piece[]{
+				piece.o, piece.x, piece.o,
+				piece.x, piece.o, piece.x,
+				piece.x, piece.o, piece.x,
+		};
+		String expected = "oxo\nxox\nxox\n";
+		assertEquals(expected, Game.pretty(board));
 	}
 
 }
