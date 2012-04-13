@@ -27,7 +27,7 @@ public class Ai {
 			for (Integer pos:available) {
 				Game.piece[] gameTreeCopy = board.clone();
 				gameTreeCopy[pos] = player;
-				Node childNode = buildGameTree(rival(player), gameTreeCopy, pos);
+				Node childNode = buildGameTree(Game.rival(player), gameTreeCopy, pos);
 				children.add(childNode);
 			}
 			node = new Node(state, position, children);
@@ -35,12 +35,6 @@ public class Ai {
 		else node = new Node(state, position);//node is leaf
 		
 		return node;
-	}
-	
-	private static Game.piece rival(Game.piece player) {
-		if (Game.piece.x == player) return Game.piece.o; 
-		else if(Game.piece.o == player) return Game.piece.x;
-		else throw new IllegalArgumentException("Cannot use "+player+" to determine rival.");
 	}
 	
 	public static int suggestedMove(Game.piece player, Game.piece[] board){
@@ -76,7 +70,7 @@ public class Ai {
 				int wins = countStateAtDepth(winState, 1, childNode);
 				childScore += wins;
 			}else{
-				int wins = countStateAtDepth(Game.getWinningState(rival(player)), 2, childNode);
+				int wins = countStateAtDepth(Game.getWinningState(Game.rival(player)), 2, childNode);
 				childScore += wins;
 			}
 			

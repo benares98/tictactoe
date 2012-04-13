@@ -50,9 +50,7 @@ public class Game {
 		
 		for(Set<Integer> winPos:scoringPositions){
 			boolean win = true;
-			for(Integer pos:winPos){
-				if (player != board[pos]) win = false;
-			}
+			for(Integer pos:winPos)	if (player != board[pos]) win = false;
 			if (win) return status.valueOf(player.toString());
 		}
 		
@@ -60,9 +58,7 @@ public class Game {
 		
 		for(Set<Integer> winPos:scoringPositions){
 			boolean win = true;
-			for(Integer pos:winPos){
-				if (player != board[pos]) win = false;
-			}
+			for(Integer pos:winPos) if (player != board[pos]) win = false;
 			if (win) return status.valueOf(player.toString());
 		}
 		
@@ -72,22 +68,76 @@ public class Game {
 
 	public static void main(String[] args){
 		boolean userSelected = false;
+		int chosen = -1;
 		do{
 			System.out.println("Press  1  to be the first player.  Press 2 to be the second player.");
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			try {
 				String input = br.readLine();
-				int chosen = Integer.valueOf(input);
-				if (chosen <= 2 && chosen > 0){
-					//TODO
-				}
+				chosen = Integer.valueOf(input);
+				if (chosen == 1 || chosen == 2) userSelected = true;
 			} catch (IOException e) {
 				System.out.println("IO error trying to read your input.");
 				System.exit(1);
-			} catch (NumberFormatException e) {
-				System.out.println("Couldn't understand your input.");
-			}
+			} catch (NumberFormatException e) {System.out.println("Couldn't understand your input.");}
 		}while(!userSelected);
+		
+		piece[] board = new piece[]{
+				piece._, piece._, piece._,
+				piece._, piece._, piece._,
+				piece._, piece._, piece._	
+		};
+		if (chosen == 1){
+			play(true, piece.x, board);
+		}
+		if (chosen == 2){
+			play(false, piece.o, board);
+		}
+	}
+	
+	public static void play(boolean user, piece player, piece[] board){
+		status winState = getWinningState(player);
+		status currentState = status.atPlay;
+		int chosen = -1;
+		System.out.println(pretty(board));
+		if (user) chosen = userSelected(board);
+		else {
+			chosen = Ai.suggestedMove(player, board);
+			System.out.println("Computer has chosen its move.");
+		}
+		
+		board[chosen] = player;
+		currentState = getState(board);
+		if (currentState == status.atPlay) play(!user, rival(player), board);
+		else{
+			System.out.println(pretty(board));
+			if (status.tie == currentState) System.out.println("The game ends with a tie.");
+			else if (currentState == winState && user)System.out.println("You win!");
+			else System.out.println("You lose!");
+		}
+	}
+
+	private static int userSelected(piece[] board) {
+		do {
+			System.out.println("Please select a position.");			
+			Set<Integer> available = Game.availablePositions(board);
+			StringBuilder sb = new StringBuilder();
+			for (int position : available) sb.append(' ').append(position);
+			
+			System.out.println("The available positions are:" + sb);
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			try {
+				String input = br.readLine();
+				int chosen = Integer.valueOf(input);
+				if (chosen > -1 && chosen < 9)
+					if (available.contains(chosen)) return chosen;
+					else System.out.println("Position "+chosen+ " is not available.");
+				System.out.println(pretty(board));
+			} catch (IOException e) {
+				System.out.println("IO error trying to read your input.");
+				System.exit(1);
+			} catch (NumberFormatException e) {System.out.println("Couldn't understand your input.");}
+		} while (true);
 	}
 	
 	public static Set<Integer> availablePositions(piece[] board){
@@ -100,6 +150,12 @@ public class Game {
 		if (null==player)throw new IllegalArgumentException("Argument must not be null");
 		if (piece._==player)throw new IllegalArgumentException("Argument must be either x or o");
 		return Game.status.valueOf(player.toString());
+	}
+	
+	public static Game.piece rival(Game.piece player) {
+		if (Game.piece.x == player) return Game.piece.o; 
+		else if(Game.piece.o == player) return Game.piece.x;
+		else throw new IllegalArgumentException("Cannot use "+player+" to determine rival.");
 	}
 	
 	public static String pretty(piece[] board){

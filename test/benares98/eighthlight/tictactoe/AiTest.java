@@ -47,6 +47,46 @@ public class AiTest {
 		};
 		int actual = Ai.suggestedMove(piece.o, board);
 		assertTrue("Actual is "+actual, 6==actual);
+		
+		board = new piece[]{
+				piece.o, piece._, piece._,
+				piece._, piece._, piece._,
+				piece._, piece._, piece._
+		};
+		actual = Ai.suggestedMove(piece.o, board);
+		assertFalse("Expected number other than 2", 2==actual);
+		
+		board = new piece[]{
+				piece.o, piece.x, piece._,
+				piece._, piece._, piece._,
+				piece._, piece._, piece._
+		};
+		actual = Ai.suggestedMove(piece.o, board);
+		assertFalse("Expected number other than 2", 2==actual);
+		
+		board = new piece[]{
+				piece.o, piece._, piece.x,
+				piece._, piece._, piece._,
+				piece._, piece._, piece._
+		};
+		actual = Ai.suggestedMove(piece.o, board);
+		assertFalse("Expected number other than 1", 1==actual);
+		
+		board = new piece[]{
+				piece.o, piece.o, piece.x,
+				piece.x, piece.x, piece._,
+				piece._, piece.o, piece._
+		};
+		actual = Ai.suggestedMove(piece.o, board);
+		assertEquals(5, actual);
+		
+		board = new piece[]{
+				piece.o, piece._, piece._,
+				piece._, piece.x, piece._,
+				piece._, piece._, piece._
+		};
+		actual = Ai.suggestedMove(piece.o, board);
+		assertFalse("Should have a number other than 8", 8==actual);
 	}
 
 	@Test
