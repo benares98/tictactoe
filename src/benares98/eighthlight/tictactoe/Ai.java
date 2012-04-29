@@ -41,10 +41,10 @@ public class Ai {
 		if (null==player||Game.piece._==player||null==board) throw new IllegalArgumentException("Arguments cannot be null.");
 		
 		List<Node> choices = buildGameTree(player, board).getChildren();
-		int best = worst(true);
+		float best = worst(true);
 		int position = -1;
 		for(Node choice:choices){
-			int score = computeMinimax(player, choice, false);
+			float score = computeMinimax(player, choice, false, 0);
 			if (betterThan(score, best, true)){
 				best = score;
 				position = choice.getPosition();
@@ -54,41 +54,29 @@ public class Ai {
 		return position;
 	}
 	
-	public static int computeMinimax(Game.piece player, Node node, boolean maximize) {
+	public static float computeMinimax(Game.piece player, Node node, boolean maximize, int depth) {
 		Game.status winState = Game.getWinningState(player);
+		Game.status currentStatus = node.getStatus();
+		if (Game.status.atPlay != currentStatus) return getObjectiveValue(currentStatus, depth, winState);
 		
-		if (Game.status.atPlay != node.getStatus()){
-			if (Game.status.tie == node.getStatus()) return 1;
-			else return (node.getStatus() == winState) ? 1 : -1;
-		}
-		
-		int best = worst(maximize);
+		float best = worst(maximize);
 		
 		for(Node childNode:node.getChildren()){
-			int childScore = computeMinimax(player, childNode, !maximize);
-			if (maximize){
-				int wins = countStateAtDepth(winState, 1, childNode);
-				childScore += wins;
-			}else{
-				int wins = countStateAtDepth(Game.getWinningState(Game.rival(player)), 2, childNode);
-				childScore += wins;
-			}
-			
+			float childScore = computeMinimax(player, childNode, !maximize, depth+1);
 			if (betterThan(childScore, best, maximize)) best = childScore;
 		}
 		return best;
 	}
 	
-	public static int countStateAtDepth(Game.status state, int depth, Node node) {
-		if (Game.status.atPlay != node.getStatus() && depth > 0) return 0; //terminal reached before going to the right depth
-		
-		if (depth == 0)return (state == node.getStatus()) ? 1 : 0;
-		
-		int count = 0;
-		for (Node childNode:node.getChildren())//assumes that since the node's status is atPlay then it has children
-			if (depth>0) count += countStateAtDepth(state, depth-1, childNode);
-		return count;
+	private static float getObjectiveValue(Game.status currentStatus, int depth, Game.status winState) {
+		if (Game.status.atPlay == currentStatus) throw new IllegalArgumentException("Game.status.atPlay is an invalid status to get the objective value.");
+		if (Game.status.tie == currentStatus)return 0;
+		else{
+			float base = (currentStatus == winState)? 1f: -1f;
+			return base/(float)depth;
+		}
 	}
-	private static boolean betterThan(int x, int y, boolean maximize) {return ((x>y)&&maximize || ((x<y)&& !maximize));}
+	
+	private static boolean betterThan(float x, float y, boolean maximize) {return ((x>y)&&maximize || ((x<y)&& !maximize));}
 	private static int worst(boolean maximize) {return (maximize)? Integer.MIN_VALUE : Integer.MAX_VALUE;}
 }

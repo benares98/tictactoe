@@ -67,6 +67,27 @@ public class Game {
 	}
 
 	public static void main(String[] args){
+		do playerSelect();
+		while(playAgain());
+	}
+
+	private static boolean playAgain() {
+		do{
+			System.out.println("Play again?  Y/N");
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			try {
+				String input = br.readLine();
+				if ("Y".equalsIgnoreCase(input)) return true;
+				if ("N".equalsIgnoreCase(input)) return false;
+				System.out.println("Could not understand.");
+			} catch (IOException e) {
+				System.out.println("IO error trying to read your input.");
+				System.exit(1);
+			}
+		}while(true);
+	}
+
+	private static void playerSelect() {
 		boolean userSelected = false;
 		int chosen = -1;
 		do{
@@ -95,7 +116,7 @@ public class Game {
 		}
 	}
 	
-	public static void play(boolean user, piece player, piece[] board){
+	private static void play(boolean user, piece player, piece[] board){
 		status winState = getWinningState(player);
 		status currentState = status.atPlay;
 		int chosen = -1;

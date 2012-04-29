@@ -53,33 +53,27 @@ public class AiTest {
 				piece._, piece._, piece._,
 				piece._, piece._, piece._
 		};
-		actual = Ai.suggestedMove(piece.o, board);
-		assertFalse("Expected number other than 2", 2==actual);
+		actual = Ai.suggestedMove(piece.x, board);
+		assertFalse("Expected number other than 1 or 3", 1==actual||3==actual);
 		
+	}
+
+	@Test
+	public void testSuggestedMove8() {
+		piece[] board;
+		int actual;
 		board = new piece[]{
-				piece.o, piece.x, piece._,
-				piece._, piece._, piece._,
-				piece._, piece._, piece._
+				piece.x, piece.o, piece.x,
+				piece._, piece.o, piece._,
+				piece.x, piece._, piece._
 		};
 		actual = Ai.suggestedMove(piece.o, board);
-		assertFalse("Expected number other than 2", 2==actual);
-		
-		board = new piece[]{
-				piece.o, piece._, piece.x,
-				piece._, piece._, piece._,
-				piece._, piece._, piece._
-		};
-		actual = Ai.suggestedMove(piece.o, board);
-		assertFalse("Expected number other than 1", 1==actual);
-		
-		board = new piece[]{
-				piece.o, piece.o, piece.x,
-				piece.x, piece.x, piece._,
-				piece._, piece.o, piece._
-		};
-		actual = Ai.suggestedMove(piece.o, board);
-		assertEquals(5, actual);
-		
+		assertEquals(7, actual);
+	}
+	@Test
+	public void testSuggestedMove7() {
+		piece[] board;
+		int actual;
 		board = new piece[]{
 				piece.o, piece._, piece._,
 				piece._, piece.x, piece._,
@@ -88,19 +82,49 @@ public class AiTest {
 		actual = Ai.suggestedMove(piece.o, board);
 		assertFalse("Should have a number other than 8", 8==actual);
 	}
+	@Test
+	public void testSuggestedMove6() {
+		piece[] board;
+		int actual;
+		board = new piece[]{
+				piece.o, piece._, piece.x,
+				piece._, piece._, piece._,
+				piece._, piece._, piece._
+		};
+		actual = Ai.suggestedMove(piece.o, board);
+		assertFalse("Expected number other than 1", 1==actual);
+	}
+	@Test
+	public void testSuggestedMove5() {
+		piece[] board;
+		int actual;
+		board = new piece[]{
+				piece.o, piece.x, piece._,
+				piece._, piece._, piece._,
+				piece._, piece._, piece._
+		};
+		actual = Ai.suggestedMove(piece.o, board);
+		assertFalse("Expected number other than 2", 2==actual);
+	}
+	
+	//Piece.o loses no matter what
+	public void testSuggestedMove4() {
+		piece[] board;
+		int actual;
+		board = new piece[]{
+				piece.o, piece.o, piece.x,
+				piece.x, piece.x, piece._,
+				piece._, piece.o, piece._
+		};
+		actual = Ai.suggestedMove(piece.o, board);
+		assertEquals(6, actual);
+	}
 
 	@Test
 	public void testSuggestedMove2(){
 
-		//Weighted pos strategy would choose 0 instead of the side pos.
-		//If 0 or 8 chosen, player x could choose the other which will give x an advantage.
-		piece[] board = new piece[]{
-				piece._, piece._, piece.x,
-				piece._, piece.o, piece._,
-				piece.x, piece._, piece._
-		};
-		int actual = Ai.suggestedMove(piece.o, board);
-		assertTrue("actual is "+actual, 1==actual||3==actual||5==actual||7==actual);
+		piece[] board;
+		int actual;
 		
 		board = new piece[]{
 				piece.x, piece._, piece._,
@@ -125,6 +149,19 @@ public class AiTest {
 		};
 		actual = Ai.suggestedMove(piece.o, board);
 		assertTrue("actual is "+actual,7==actual);
+	}
+
+	@Test
+	public void testSuggestedMove9() {
+		//Weighted pos strategy would choose 0 instead of the side pos.
+		//If 0 or 8 chosen, player x could choose the other which will give x an advantage.
+		piece[] board = new piece[]{
+				piece._, piece._, piece.x,
+				piece._, piece.o, piece._,
+				piece.x, piece._, piece._
+		};
+		int actual = Ai.suggestedMove(piece.o, board);
+		assertTrue("actual is "+actual, 1==actual||3==actual||5==actual||7==actual);
 	}
 	
 	@Test
