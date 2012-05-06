@@ -167,16 +167,4 @@ public class GameTest {
 			assertTrue(e instanceof IllegalArgumentException);
 		}
 	}
-
-	@Test
-	public void testPretty() {
-		piece[] board = new piece[]{
-				piece.o, piece.x, piece.o,
-				piece.x, piece.o, piece.x,
-				piece.x, piece.o, piece.x,
-		};
-		String expected = "oxo\nxox\nxox\n";
-		assertEquals(expected, Game.pretty(board));
-	}
-
 }
