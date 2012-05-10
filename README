@@ -1,0 +1,3 @@
+tictactoe
+=========
+This is a very simple implementation of the game.  It's playable from the commandline by executing the main entry point from the CommandLine class.  You'll have the option to choose if you or the computer start first.  By default the first player is X, the second player O.  You must hit the Enter key after each choice you make.
